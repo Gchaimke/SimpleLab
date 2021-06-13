@@ -1,0 +1,255 @@
+ /*
+SimpleStore 1
+*/
+
+ .card-content, .cart, .statistic {
+     font-family: sans-serif;
+ }
+
+ .card-body.day-card {
+     min-height: 100px;
+ }
+
+ .lang-he, .lang-ru {
+     line-height: 16px !important;
+ }
+
+ .cart-wraper {
+     min-width: 200px;
+ }
+
+ .rtl {
+     direction: rtl;
+ }
+
+ .statistic {
+     background: aliceblue;
+     line-height: 37px;
+     flex-direction: row !important;
+     border-radius: 5px;
+ }
+
+ .statistic>div {
+     border-radius: 5px 0 0 5px;
+ }
+
+ .statistic>div {
+     right: 10px;
+ }
+
+ #update_stats {
+     padding: 10px;
+     position: relative;
+     left: 5px;
+ }
+
+ .cart {
+     position: fixed !important;
+     right: 5px;
+     top: 60px;
+     z-index: 5;
+     background: white;
+     border: 1px solid;
+     border-radius: 5px;
+ }
+
+ .cart_items {
+     padding-right: 1rem;
+     overflow-y: auto;
+     max-height: 65vh;
+     border-bottom: 1px solid;
+ }
+
+ .cart_items>li {
+     transition-duration: 5s;
+ }
+
+ .remove-from-cart {
+     padding: 5px 9px;
+     border-radius: 10px;
+     color: white;
+     cursor: pointer;
+     margin-right: 5px;
+     line-height: 34px;
+ }
+
+ .plus, .minus {
+     line-height: 10px !important;
+     font-size: 25px !important;
+ }
+
+ .product-card {
+     max-width: min-content;
+ }
+
+ .card-body.product {
+     min-height: 145px;
+ }
+
+ .card-image {
+     display: block;
+     width: 100%;
+     height: 120px;
+     background-size: cover;
+     background-repeat: no-repeat;
+     background-position: center;
+ }
+
+ .card-title {
+     text-align: center;
+     text-transform: capitalize;
+     min-width: min-content;
+     cursor: pointer;
+ }
+
+ .card-text {
+     min-height: 25px;
+ }
+
+ .card-text, .card-title {
+     white-space: pre-wrap;
+ }
+
+ .delete-product, .edit-product, .duplicate-product, .favorite-product {
+     position: absolute;
+     margin-top: -132px;
+     background: white !important;
+     font-size: 2em;
+     padding: 10px;
+     border-radius: 5px;
+     box-shadow: 1px 1px 3px 0px #0000006b;
+ }
+
+ .gallery_upload {
+     background: #e6e6e6;
+     padding: 2rem;
+ }
+
+ .gallery_image>.image {
+     cursor: pointer;
+ }
+
+ .gallery_image>span {
+     min-height: 150px;
+     background-size: cover;
+     background-position: center;
+ }
+
+ .row.overflow-auto {
+     height: 300px;
+ }
+
+ .btn-outline-danger.delete-product:hover, .btn-outline-dark.duplicate-product:hover {
+     color: black !important;
+ }
+
+ .delete-product, .favorite-product {
+     left: 0;
+ }
+
+ .edit-product, .duplicate-product {
+     right: 0;
+ }
+
+ .favorite-product, .duplicate-product {
+     margin-top: -70px;
+ }
+
+ .product-to-cart {
+     font-size: 1em;
+     margin-left: 10px;
+     cursor: pointer;
+     border: 1px solid;
+     color: #1aa778;
+     padding: 5px 15px;
+     border-radius: 5px;
+ }
+
+ .delete-category, .edit-category, .add-product_toggle {
+     position: relative;
+     top: 40px;
+     font-size: 1.3rem;
+     padding: 5px;
+     z-index: 4;
+     cursor: pointer;
+ }
+
+ .delete-category {
+     color: red;
+     left: 130px;
+ }
+
+ .edit-category {
+     color: #1984fe;
+     left: 100px;
+ }
+
+ .add-product_toggle {
+     right: 50px;
+ }
+
+ /*jQuery slider */
+
+ .item {
+     width: 50%;
+ }
+
+ .MS-content {
+     margin: 15px 1%;
+     overflow: hidden;
+     white-space: nowrap;
+     height: 300px;
+ }
+
+ .MS-controls {
+     width: 50%;
+     margin: auto;
+ }
+
+ button.btn.MS-right {
+     float: right;
+ }
+
+ @media only screen and (max-width: 690px) {
+     .navbar-brand {
+         font-size: 0.9rem !important;
+     }
+     .delete-product, .edit-product {
+         margin-top: -122px;
+     }
+     .favorite-product, .duplicate-product {
+         margin-top: -50px;
+     }
+     .row {
+         margin-top: 40px !important;
+     }
+     .card-body.day-card {
+         min-height: initial;
+     }
+     .card.mt-2 {
+         max-width: initial;
+     }
+     .card-body {
+         padding: 5px 1rem !important;
+     }
+     .row.overflow-auto {
+         height: 260px;
+     }
+     .MS-content {
+         height: 280px;
+     }
+ }
+
+ @media (max-width: 992px) {
+     .statistic {
+         margin: 20px;
+     }
+     #update_stats {
+         position: absolute;
+         right: 35px;
+     }
+ }
+
+ /* display 3 */
+
+ @media (min-width: 768px) {}

@@ -1,0 +1,24 @@
+main {
+    direction: rtl;
+}
+
+.cart {
+    right: initial;
+    left: 5px;
+}
+
+.delete-category {
+    right: 180px;
+}
+
+.edit-category {
+    left: -105px;
+}
+
+button.btn.MS-right {
+    float: initial;
+}
+
+button.btn.MS-left {
+    float: left;
+}
