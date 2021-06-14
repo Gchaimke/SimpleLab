@@ -9,8 +9,8 @@ if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
  * Config
  */
 require_once(__DIR__ . '/../config.php');
-define("ORDERS_PATH", DOC_ROOT . "data/orders/");
-
+define("DATA_FOLDER",DOC_ROOT . "data/".FOLDER_KEY."/");
+define("TICKETS_PATH", DATA_FOLDER . "tickets/");
 /**
  * Classes Loader
  */
@@ -148,89 +148,89 @@ function delete_category($id)
 }
 
 /**
- * Order
+ * ticket
  * TODO: reformat to class
  */
-function save_order($cart, $total, $client)
+function save_ticket($cart, $total, $client)
 {
-    $orders_path = ORDERS_PATH . date('my');
-    if (!file_exists($orders_path)) {
-        mkdir($orders_path, 0700);
+    $TICKETS_PATH = TICKETS_PATH . date('my');
+    if (!file_exists($TICKETS_PATH)) {
+        mkdir($TICKETS_PATH, 0700);
     }
-    $orders = get_files($orders_path, ["json"]);
-    $order_count = add_zero(count($orders) + 1);
-    $order_name = date('my-') . $order_count;
-    $order_path = $orders_path . "/$order_name.json";
+    $tickets = get_files($TICKETS_PATH, ["json"]);
+    $ticket_count = add_zero(count($tickets) + 1);
+    $ticket_name = date('my-') . $ticket_count;
+    $ticket_path = $TICKETS_PATH . "/$ticket_name.json";
 
-    $order = new stdClass();
+    $ticket = new stdClass();
     $log_date = date('d/m/y H:i:s');
-    $order->id = $order_name;
-    $order->date = $log_date;
-    $order->items = $cart;
-    $order->total = $total;
-    $order->client = $client;
+    $ticket->id = $ticket_name;
+    $ticket->date = $log_date;
+    $ticket->items = $cart;
+    $ticket->total = $total;
+    $ticket->client = $client;
 
-    file_put_contents($order_path, json_encode($order, JSON_UNESCAPED_UNICODE));
-    send_email($order_name);
-    return $order_name;
+    file_put_contents($ticket_path, json_encode($ticket, JSON_UNESCAPED_UNICODE));
+    send_email($ticket_name);
+    return $ticket_name;
 }
 
-function add_zero($orders)
+function add_zero($tickets)
 {
-    if ($orders >= 0 && $orders < 10) {
-        return '00' . $orders;
+    if ($tickets >= 0 && $tickets < 10) {
+        return '00' . $tickets;
     }
-    if ($orders >= 10 && $orders < 100) {
-        return '0' . $orders;
+    if ($tickets >= 10 && $tickets < 100) {
+        return '0' . $tickets;
     }
-    if ($orders >= 100) {
-        return $orders;
+    if ($tickets >= 100) {
+        return $tickets;
     }
 }
 
-function get_orders($month)
+function get_tickets($month)
 {
-    $orders_path = ORDERS_PATH . $month;
-    if (file_exists($orders_path)) {
-        $orders['orders'] = get_files($orders_path, ["json"]);
-        $orders['month'] = $month;
-        return $orders;
+    $TICKETS_PATH = TICKETS_PATH . $month;
+    if (file_exists($TICKETS_PATH)) {
+        $tickets['tickets'] = get_files($TICKETS_PATH, ["json"]);
+        $tickets['month'] = $month;
+        return $tickets;
     }
     return null;
 }
 
-function get_order($order_num = 0)
+function get_ticket($ticket_num = 0)
 {
-    $order_month = explode("_", $order_num);
-    if (count($order_month) != 2) {
-        $order_month = date("my");
-        $order_num = $order_month . "-" . substr($order_num, -3);
+    $ticket_month = explode("_", $ticket_num);
+    if (count($ticket_month) != 2) {
+        $ticket_month = date("my");
+        $ticket_num = $ticket_month . "-" . substr($ticket_num, -3);
     } else {
-        $order_month = $order_month[0];
+        $ticket_month = $ticket_month[0];
     }
-    $order_path = ORDERS_PATH . $order_month . '/' . $order_num . ".json";
-    if (file_exists($order_path)) {
-        return json_decode(file_get_contents($order_path));
+    $ticket_path = TICKETS_PATH . $ticket_month . '/' . $ticket_num . ".json";
+    if (file_exists($ticket_path)) {
+        return json_decode(file_get_contents($ticket_path));
     } else {
-        $order_num = $order_month . "-" . substr($order_num, -3);
-        $order_path = ORDERS_PATH . $order_month . '/' . $order_num . ".json";
-        return json_decode(file_get_contents($order_path));
+        $ticket_num = $ticket_month . "-" . substr($ticket_num, -3);
+        $ticket_path = TICKETS_PATH . $ticket_month . '/' . $ticket_num . ".json";
+        return json_decode(file_get_contents($ticket_path));
     }
-    $msg = lang("order_not_found");
-    return "<h3>$order_num $msg</h3>";
+    $msg = lang("ticket_not_found");
+    return "<h3>$ticket_num $msg</h3>";
 }
 
-function order_client_to_html($order_num = 0)
+function ticket_client_to_html($ticket_num = 0)
 {
-    $order = get_order($order_num);
-    if (is_object($order)) {
+    $ticket = get_ticket($ticket_num);
+    if (is_object($ticket)) {
         $html = "<br><h3>" . lang("shipment_address") . "</h3>";
         $html .= "<ul>";
-        $html .= "<li>" . lang("name") . ": " . $order->client->name . "</li>";
-        $html .= "<li>" . lang("phone") . ": " . $order->client->phone . "</li>";
-        $html .= "<li>" . lang("email") . ": " . $order->client->email . "</li>";
-        $html .= "<li>" . lang("address") . ": " . $order->client->address . "</li>";
-        $html .= "<li>" . lang("city") . ": " . $order->client->city . "</li>";
+        $html .= "<li>" . lang("name") . ": " . $ticket->client->name . "</li>";
+        $html .= "<li>" . lang("phone") . ": " . $ticket->client->phone . "</li>";
+        $html .= "<li>" . lang("email") . ": " . $ticket->client->email . "</li>";
+        $html .= "<li>" . lang("address") . ": " . $ticket->client->address . "</li>";
+        $html .= "<li>" . lang("city") . ": " . $ticket->client->city . "</li>";
         $html .= '</ul>';
         return $html;
     }
@@ -238,22 +238,22 @@ function order_client_to_html($order_num = 0)
     return "<br>$msg";
 }
 
-function order_to_html($order_num = 0)
+function ticket_to_html($ticket_num = 0)
 {
     global $carrency, $lng;
     $direction = $lng != "he" ? "ltr" : "rtl";
-    $order = get_order($order_num);
-    if (is_object($order)) {
-        $style = 'border: 1px solid black;border-collapse: collapse;padding: 5px;font-weight: 700;';
+    $ticket = get_ticket($ticket_num);
+    if (is_object($ticket)) {
+        $style = 'bticket: 1px solid black;bticket-collapse: collapse;padding: 5px;font-weight: 700;';
         $th_style = 'text-align: center;background-color: #bce0ff;font-size: larger;';
         $product = lang("product");
         $qtty = lang("qtty");
         $price = lang("price");
         $total = lang("total");
         $approximately = lang("approximately");
-        $order_lbl = lang("order");
+        $ticket_lbl = lang("ticket");
         $html = "<tr><th style='$style $th_style'>$product</th><th style='$style $th_style'>$qtty</th><th style='$style $th_style'>$price</th></tr>";
-        foreach ($order->items as $value) {
+        foreach ($ticket->items as $value) {
             $html .= "<tr>";
             $value = explode(',', $value);
             foreach ($value as $td) {
@@ -262,12 +262,12 @@ function order_to_html($order_num = 0)
             $html .= '</tr>';
         }
         $html .= "<tr><td style='$style'>$total (<span style='color:red;'>$approximately</span>) ~
-        </td><td colspan='2' style='text-align: center;$style'>$order->total$carrency</td></tr>";
+        </td><td colspan='2' style='text-align: center;$style'>$ticket->total$carrency</td></tr>";
 
         return "<div style='direction:$direction'><h3 style='text-align: center;background: #bb80a1;color: white;padding: 30px;'>
-        $order->date <br> $order_lbl: <span style='direction:rtl'>$order->id </span></h3><table style='width:100%;$style'>$html</table><br>";
+        $ticket->date <br> $ticket_lbl: <span style='direction:rtl'>$ticket->id </span></h3><table style='width:100%;$style'>$html</table><br>";
     }
-    return $order;
+    return $ticket;
 }
 
 
@@ -355,13 +355,13 @@ function update_stats()
 {
     $stats['total'] = 0;
     $stats['count'] = 0;
-    $orders = get_orders(date('my'));
-    if (is_array($orders)) {
-        foreach ($orders["orders"] as $order) {
-            $order = json_decode(file_get_contents(ORDERS_PATH . $orders["month"] . '/' . $order));
-            if (property_exists($order, "client")) {
-                if ($order->client->name != 'test') {
-                    $stats['total'] += $order->total;
+    $tickets = get_tickets(date('my'));
+    if (is_array($tickets)) {
+        foreach ($tickets["tickets"] as $ticket) {
+            $ticket = json_decode(file_get_contents(TICKETS_PATH . $tickets["month"] . '/' . $ticket));
+            if (property_exists($ticket, "client")) {
+                if ($ticket->client->name != 'test') {
+                    $stats['total'] += $ticket->total;
                     $stats['count']++;
                 }
             }
@@ -391,21 +391,21 @@ function str_contains($haystack, $needle, $ignoreCase = true)
     return ($needlePos === false ? false : ($needlePos + 1));
 }
 
-function send_email($order_num = 0)
+function send_email($ticket_num = 0)
 {
     global $company;
     $msg = lang("email_not_useble");
-    if ($order_num != 0) {
+    if ($ticket_num != 0) {
         $to = $company->email;
-        $subject = "New Order " . $order_num;
-        $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]" . SITE_ROOT . "?order=" . $order_num;
-        $message =  order_to_html($order_num) . order_client_to_html($order_num) .
+        $subject = "New ticket " . $ticket_num;
+        $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]" . SITE_ROOT . "?ticket=" . $ticket_num;
+        $message =  ticket_to_html($ticket_num) . ticket_client_to_html($ticket_num) .
             "<b style='color:red;'> $msg <a href='https://wa.me/972$company->phone'>whatsapp</a> </b><br><br>" .
             "<br> Sent from <a target='_blank' href='$actual_link'> $actual_link</a><br><br><br><br>";
         $headers = "MIME-Version: 1.0" . "\r\n";
         $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
         $headers .= "From: admin@mc88.co.il" . "\r\n";
-        $headers .= "CC: " . get_order($order_num)->client->email . "\r\n";
+        $headers .= "CC: " . get_ticket($ticket_num)->client->email . "\r\n";
         $headers .= "Bcc: gchaimke@gmail.com" . "\r\n";
 
         mail($to, $subject, $message, $headers);
@@ -441,11 +441,11 @@ function update_products_id($category_index = '')
 
 function old_to_new()
 {
-    $orders = json_decode(file_get_contents(ORDERS_PATH . "05_21.json"));
+    $tickets = json_decode(file_get_contents(TICKETS_PATH . "05_21.json"));
     $tmp = [];
-    foreach ($orders as $order) {
-        $order_path = ORDERS_PATH . date("my/") . date("my_") . substr($order->id, -3) . ".json";
-        file_put_contents($order_path, json_encode($order, JSON_UNESCAPED_UNICODE));
+    foreach ($tickets as $ticket) {
+        $ticket_path = TICKETS_PATH . date("my/") . date("my_") . substr($ticket->id, -3) . ".json";
+        file_put_contents($ticket_path, json_encode($ticket, JSON_UNESCAPED_UNICODE));
     }
     return $tmp;
 }
