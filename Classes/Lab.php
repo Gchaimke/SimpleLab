@@ -8,7 +8,6 @@ require_once(DOC_ROOT . 'Classes/Ticket.php');
 require_once(DOC_ROOT . 'Classes/Clients.php');
 require_once(DOC_ROOT . 'Classes/Client.php');
 require_once(DOC_ROOT . 'Classes/Users.php');
-require_once(DOC_ROOT . 'Classes/User.php');
 
 class Lab
 {
