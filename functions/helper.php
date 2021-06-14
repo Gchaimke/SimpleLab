@@ -9,8 +9,16 @@ if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
  * Config
  */
 require_once(__DIR__ . '/../config.php');
-define("DATA_FOLDER",DOC_ROOT . "data/".FOLDER_KEY."/");
+define("DATA_FOLDER", DOC_ROOT . "data" . FOLDER_KEY . "/");
 define("TICKETS_PATH", DATA_FOLDER . "tickets/");
+
+if (!file_exists(DATA_FOLDER)) {
+    $src = DOC_ROOT . "data";
+    mkdir(DATA_FOLDER, 0700);
+    if (file_exists($src)) {
+        recurse_copy($src,DATA_FOLDER);  
+    }
+}
 /**
  * Classes Loader
  */
@@ -411,6 +419,22 @@ function send_email($ticket_num = 0)
         mail($to, $subject, $message, $headers);
         return $message;
     }
+}
+
+function recurse_copy($src,$dst) {
+    $dir = opendir($src);
+    @mkdir($dst);
+    while(false !== ( $file = readdir($dir)) ) {
+        if (( $file != '.' ) && ( $file != '..' )) {
+            if ( is_dir($src . '/' . $file) ) {
+                recurse_copy($src . '/' . $file,$dst . '/' . $file);
+            }
+            else {
+                copy($src . '/' . $file,$dst . '/' . $file);
+            }
+        }
+    }
+    closedir($dir);
 }
 
 /**
