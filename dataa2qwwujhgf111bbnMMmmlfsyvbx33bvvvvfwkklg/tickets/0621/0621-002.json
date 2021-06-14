@@ -1,1 +1,21 @@
-{"id":"0621-002","date":"01\/06\/21 15:50:48","items":{"0_35":"Асадо цельный мороженый,2кг,46"},"total":"46","client":{"name":"ева","phone":"0506569956","email":"eenukashvili@mail.ru","address":"","city":"Самовывоз Бат Ям"}}
+{
+    "id": "0621-002",
+    "technician":"Reuven",
+    "date": "01\/06\/21 15:48:20",
+    "kind": "PC",
+    "password":"",
+    "problem":"virus",
+    "accessories": {
+        "power_supply": 1,
+        "bag": 0,
+        "cables": 0,
+        "mouse": 0,
+        "other": "stilus"
+    },
+    "price": "235",
+    "client": {
+        "name": "Margarrita",
+        "phone": "0506569956",
+        "email": "eenukashvili@mail.rul"
+    }
+}
