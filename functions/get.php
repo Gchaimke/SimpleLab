@@ -31,3 +31,7 @@ if (isset($_GET['order'])) {
         $message['text'] = "$msg <i class=\"far fa-smile-wink\"></i>";
     }
 }
+
+if (isset($_GET['xml'])) {
+    orders_report();
+}

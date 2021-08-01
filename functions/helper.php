@@ -16,7 +16,7 @@ if (!file_exists(DATA_FOLDER)) {
     $src = DOC_ROOT . "data";
     mkdir(DATA_FOLDER, 0700);
     if (file_exists($src)) {
-        recurse_copy($src,DATA_FOLDER);  
+        recurse_copy($src, DATA_FOLDER);
     }
 }
 /**
@@ -421,16 +421,16 @@ function send_email($ticket_num = 0)
     }
 }
 
-function recurse_copy($src,$dst) {
+function recurse_copy($src, $dst)
+{
     $dir = opendir($src);
     @mkdir($dst);
-    while(false !== ( $file = readdir($dir)) ) {
-        if (( $file != '.' ) && ( $file != '..' )) {
-            if ( is_dir($src . '/' . $file) ) {
-                recurse_copy($src . '/' . $file,$dst . '/' . $file);
-            }
-            else {
-                copy($src . '/' . $file,$dst . '/' . $file);
+    while (false !== ($file = readdir($dir))) {
+        if (($file != '.') && ($file != '..')) {
+            if (is_dir($src . '/' . $file)) {
+                recurse_copy($src . '/' . $file, $dst . '/' . $file);
+            } else {
+                copy($src . '/' . $file, $dst . '/' . $file);
             }
         }
     }
@@ -472,4 +472,110 @@ function old_to_new()
         file_put_contents($ticket_path, json_encode($ticket, JSON_UNESCAPED_UNICODE));
     }
     return $tmp;
+}
+
+function orders_report()
+{
+    $product['sku'] = "CPTLTL";
+    $product['unit_price'] = 1.00;
+    $product['qty'] = 2;
+    $products[] = $product;
+
+    $reportProducts = array();
+    $total_document = 0;
+    foreach ($products as $product) {
+        $unitPrice = $product['unit_price'];
+        $total = number_format($unitPrice * $product['qty'], 2, '.', '');
+        $total_document += $total;
+
+        $reportProducts[] = array(
+            'ProductCode'                 => $product['sku'],
+            'AdditionalProductCode'     => '',
+            'Quantity'                    => $product['qty'],
+            'UnitPrice'                    => $unitPrice,
+            'PctLineDiscount'             => 0,
+            'TotalLine'                 => $total,
+            'LineComment'                => '',
+        );
+    }
+
+    $order['ship_price'] = 1.00;
+    if ($order['ship_price'] != 0) {
+        $reportProducts[] = array(
+            'ProductCode'                 => 'TRANSPORT',
+            'AdditionalProductCode'     => '',
+            'Quantity'                    => 1,
+            'UnitPrice'                    => 1.00,
+            'PctLineDiscount'             => 0,
+            'TotalLine'                 => 1.00,
+            'LineComment'                => '',
+        );
+        $total_document += 1.00;
+    }
+
+    $order['orderid'] = 1012;
+    $order['peyment_type'] = 1;
+    $order['transaction_id'] = "test";
+    $order['peyment_type'] = 1;
+    $order['total_price'] = 2.00;
+    $order['date_order'] = date("d/m/Y");
+    $order['clientID'] = 30378;
+    $order['company'] = "בדיקה";
+    $order['firstname'] = "חיים";
+    $order['lastname'] = "בודק";
+    $order['streetOne'] = "שוקן";
+    $order['address'] = "כתובת";
+    $order['streetTwo'] = "חיים";
+    $order['houseNo'] = 1;
+    $order['city'] = "ראשון";
+    $order['zip'] = "12345";
+    $order['phone'] = "05412345789";
+    $order['cellphone'] = "05412345789";
+    $order['CostumerOrderNo'] = "";
+    $order['email'] = "gchaim@avdor.com";
+
+    $isPaid = (($order['peyment_type'] == 1 && $order['transaction_id'] != '') || ($order['peyment_type'] == 2 && $order['transaction_id'] != ''));
+    $bankAccount = ($order['peyment_type'] == 1) ? 1301 : 1305;
+    $totalPrice = $order['ship_price'] + $order['total_price'];
+    $ReportOrder = array(
+        "Documents" => array(
+            'DocumentDate'             => date("d/m/Y", strtotime($order['date_order'])),
+            'DocumentType'             => 17,
+            'DocumentSeries'         => 1,
+            'DocumentDesign'         => 0,
+            'DocumentNumber'         => $order['orderid'],
+            'SellToCustomerNo'         => ($order['clientID']) ? $order['clientID'] : 30378,
+            'SellToCustomerName'     => ($order['company'] != '') ? $order['company'] : $order['firstname'] . " " . $order['lastname'],
+            'CustomerStreetName'     => ($order['streetOne'] == '') ? $order['address'] : $order['streetOne'],
+            'CustomerStreetNameExt' => $order['streetTwo'],
+            'CustomerHouseNo'         => $order['houseNo'],
+            'CustomerCity'             => $order['city'],
+            'CustomerZipcode'         => $order['zip'],
+            'Phone1'                 => $order['phone'],
+            'DeliveryStreetName'     => '',
+            'DeliveryStreetNameExt' => '',
+            'DeliveryHouseNo'         => '',
+            'DeliveryCity'             => '',
+            'DeliveryZipcode'         => '',
+            'Phone2'                 => $order['cellphone'],
+            'CustomerOrderNo'         => $order['CostumerOrderNo'],
+            'CompanyNumber'         => '',
+            'DueDate'                 => '',
+            'DeliveryDate'             => date("d/m/Y", strtotime($order['date_order'])),
+            'DeliveryType'             => ($order['ship_price'] == 0) ? 1 : 2,
+            'DocumentRem'             => 'עבור: ' . $order['firstname'] . " " . $order['lastname'],
+            'DocumentComment1'         => '',
+            'DocumentComment2'         => $order['email'],
+            'DocumentPaid'             => ($isPaid) ? 'T' : 'F',
+            'BankAccount'             => ($isPaid) ? $bankAccount : '',
+            'ReceiptAmount'         => ($isPaid) ? $totalPrice : '',
+            'TotalLines'             => number_format($total_document, 2, '.', ''),
+            'SalesDocumentTotal'     => $totalPrice,
+            'DocumentLines'         => $reportProducts,
+        )
+    );
+    // Create file
+    $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><root></root>');
+    SimpleLab\Xml::array_to_xml($ReportOrder, $xml, 'SalesLine');
+    $xml->asXML(DOC_ROOT . 'SITEDOC_' . $order['orderid'] . '.xml');
 }
