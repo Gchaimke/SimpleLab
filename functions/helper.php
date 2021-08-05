@@ -474,50 +474,26 @@ function old_to_new()
     return $tmp;
 }
 
-function orders_report()
+function get_products()
 {
+    $products = array();
     $product['sku'] = "CPTLTL";
-    $product['unit_price'] = 1.00;
+    $product['unit_price'] = 10;
+    $product['qty'] = 3;
+    $products[] = $product;
+    $product['sku'] = "CPTLTL";
+    $product['unit_price'] = 15;
     $product['qty'] = 2;
     $products[] = $product;
+    return $products;
+}
 
-    $reportProducts = array();
-    $total_document = 0;
-    foreach ($products as $product) {
-        $unitPrice = $product['unit_price'];
-        $total = number_format($unitPrice * $product['qty'], 2, '.', '');
-        $total_document += $total;
-
-        $reportProducts[] = array(
-            'ProductCode'                 => $product['sku'],
-            'AdditionalProductCode'     => '',
-            'Quantity'                    => $product['qty'],
-            'UnitPrice'                    => $unitPrice,
-            'PctLineDiscount'             => 0,
-            'TotalLine'                 => $total,
-            'LineComment'                => '',
-        );
-    }
-
-    $order['ship_price'] = 1.00;
-    if ($order['ship_price'] != 0) {
-        $reportProducts[] = array(
-            'ProductCode'                 => 'TRANSPORT',
-            'AdditionalProductCode'     => '',
-            'Quantity'                    => 1,
-            'UnitPrice'                    => 1.00,
-            'PctLineDiscount'             => 0,
-            'TotalLine'                 => 1.00,
-            'LineComment'                => '',
-        );
-        $total_document += 1.00;
-    }
-
-    $order['orderid'] = 1012;
-    $order['peyment_type'] = 1;
+function get_order()
+{
+    $order['ship_price'] = 0;
+    $order['orderid'] = 1016;
     $order['transaction_id'] = "test";
     $order['peyment_type'] = 1;
-    $order['total_price'] = 2.00;
     $order['date_order'] = date("d/m/Y");
     $order['clientID'] = 30378;
     $order['company'] = "בדיקה";
@@ -533,13 +509,47 @@ function orders_report()
     $order['cellphone'] = "05412345789";
     $order['CostumerOrderNo'] = "";
     $order['email'] = "gchaim@avdor.com";
+}
 
+function orders_report()
+{
+    $products = get_products();
+    $reportProducts = array();
+    $total_document = 0;
+    foreach ($products as $product) {
+        $total = number_format($product['unit_price'] * $product['qty'], 2, '.', '');
+        $total_document += $total;
+        $reportProducts[] = array(
+            'ProductCode'                 => $product['sku'],
+            'AdditionalProductCode'     => '',
+            'Quantity'                    => $product['qty'],
+            'UnitPrice'                    => $product['unit_price'],
+            'PctLineDiscount'             => 0,
+            'TotalLine'                 => $total,
+            'LineComment'                => '',
+        );
+    }
+
+    $order = get_order();
+    if ($order['ship_price'] != 0) {
+        $reportProducts[] = array(
+            'ProductCode'                 => 'TRANSPORT',
+            'AdditionalProductCode'     => '',
+            'Quantity'                    => 1,
+            'UnitPrice'                    => 1.00,
+            'PctLineDiscount'             => 0,
+            'TotalLine'                 => 1.00,
+            'LineComment'                => '',
+        );
+        $total_document += 1.00;
+    }
+    $order['total_price'] = $total_document + ($total_document * 0.17);
     $isPaid = (($order['peyment_type'] == 1 && $order['transaction_id'] != '') || ($order['peyment_type'] == 2 && $order['transaction_id'] != ''));
     $bankAccount = ($order['peyment_type'] == 1) ? 1301 : 1305;
     $totalPrice = $order['ship_price'] + $order['total_price'];
     $ReportOrder = array(
         "Documents" => array(
-            'DocumentDate'             => date("d/m/Y", strtotime($order['date_order'])),
+            'DocumentDate'             =>  $order['date_order'],
             'DocumentType'             => 17,
             'DocumentSeries'         => 1,
             'DocumentDesign'         => 0,
@@ -561,7 +571,7 @@ function orders_report()
             'CustomerOrderNo'         => $order['CostumerOrderNo'],
             'CompanyNumber'         => '',
             'DueDate'                 => '',
-            'DeliveryDate'             => date("d/m/Y", strtotime($order['date_order'])),
+            'DeliveryDate'             =>  $order['date_order'],
             'DeliveryType'             => ($order['ship_price'] == 0) ? 1 : 2,
             'DocumentRem'             => 'עבור: ' . $order['firstname'] . " " . $order['lastname'],
             'DocumentComment1'         => '',
