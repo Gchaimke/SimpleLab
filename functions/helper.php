@@ -589,3 +589,15 @@ function orders_report()
     SimpleLab\Xml::array_to_xml($ReportOrder, $xml, 'SalesLine');
     $xml->asXML(DOC_ROOT . 'SITEDOC_' . $order['orderid'] . '.xml');
 }
+
+function langDetect($str)
+{
+    if (preg_match('/[А-Яа-яЁё]/u', substr($str, 0, 2))) {
+        return "ru";
+    }
+    if (preg_match('/[א-ת]/u', substr($str, 0, 2))) {
+        return "he";
+    }
+
+    return "";
+}

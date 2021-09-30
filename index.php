@@ -48,6 +48,17 @@ include_once('elements/about.php');
             //include_once('elements/test.php');
             echo "<div class='container'>$company->header</div>";
             include_once('elements/search.php');
+            $test = array("test Жанна","Жанна test","ברוס test");
+            foreach ($test as $key => $client) {
+                $message_lng = "sms_notification_message";
+                if (preg_match('/[А-Яа-яЁё]/u', substr($client, 0, 2))) {
+                    $message_lng = $message_lng."_ru";
+                }
+                if (preg_match('/[א-ת]/u', substr($client, 0, 2))) {
+                    $message_lng = $message_lng."_he";
+                }
+                echo $key . " => $message_lng<br>";
+            }
             ?>
         </div>
     </main>
